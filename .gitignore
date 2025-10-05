@@ -39,3 +39,7 @@
 
 # debug information files
 *.dwo
+
+
+sequence_game
+obj/
