@@ -47,7 +47,7 @@ void Dumb1v1Bot::printBoard() {
 Move Dumb1v1Bot::playTurn(const PlayerView& v) {
     view = v;
     vector<Card> hand = view.getPlayerCards();
-    std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 5 seconds to simulate thinking
+    // std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 5 seconds to simulate thinking
     do {
         int cardIndex = rand() % hand.size();
         Card selectedCard = hand[cardIndex];

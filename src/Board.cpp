@@ -31,13 +31,15 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
     for(int i = 0; i < numCols; i++) {
         for(int j = 0; j < numRows - 4; j++) {
             bool allMatch = true;
+            int sharedCells = 0;
             for(int k = 0; k < 5; k++) {
                 if(!(board[j + k][i].getChipType() == type || board[j + k][i].isCornerCell())) {
                     allMatch = false;
                     break;
                 }
+                if(board[j + k][i].isInSequence()) sharedCells++;
             }
-            if(allMatch) {
+            if(allMatch && sharedCells <= 1) {
                 vector<pair<int, int>> positions;
                 for(int k = 0; k < 5; k++) {
                     if (!board[j + k][i].isCornerCell()) {
@@ -55,13 +57,15 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
     for(int i = 0; i < numRows; i++) {
         for(int j = 0; j < numCols - 4; j++) {
             bool allMatch = true;
+            int sharedCells = 0;
             for(int k = 0; k < 5; k++) {
                 if(!(board[i][j + k].getChipType() == type || board[i][j + k].isCornerCell())) {
                     allMatch = false;
                     break; 
                 }
+                if(board[i][j + k].isInSequence()) sharedCells++;
             }
-            if(allMatch) {
+            if(allMatch && sharedCells <= 1) {
                 vector<pair<int, int>> positions;
                 for(int k = 0; k < 5; k++) {
                     if (!board[i][j + k].isCornerCell()) {
@@ -71,7 +75,6 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
                 }
                 result.count++;
                 result.positions.push_back(positions);
-                j += 4;
             }
         }
     }
@@ -79,13 +82,15 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
     for(int i = 0; i < numRows - 4; i++) {
         for(int j = 0; j < numCols - 4; j++) {
             bool allMatch = true;
+            int sharedCells = 0;
             for(int k = 0; k < 5; k++) {
                 if(!(board[i + k][j + k].getChipType() == type || board[i + k][j + k].isCornerCell())) {
                     allMatch = false;
                     break;
                 }
+                if(board[i + k][j + k].isInSequence()) sharedCells++;
             }
-            if (allMatch) {
+            if (allMatch && sharedCells <= 1) {
                 vector<pair<int, int>> positions;
                 for(int k = 0; k < 5; k++) {
                     if (!board[i + k][j + k].isCornerCell()) {
@@ -95,7 +100,6 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
                 }
                 result.count++;
                 result.positions.push_back(positions);
-                j += 4;
             }
         }
     }
@@ -103,13 +107,15 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
     for(int i = 0; i < numRows - 4; i++) {
         for(int j = 4; j < numCols; j++) {
             bool allMatch = true;
+            int sharedCells = 0;
             for(int k = 0; k < 5; k++) {
                 if(!(board[i + k][j - k].getChipType() == type || board[i + k][j - k].isCornerCell())) {
                     allMatch = false;
                     break; 
                 }
+                if(board[i + k][j - k].isInSequence()) sharedCells++;
             }
-            if (allMatch) {
+            if (allMatch && sharedCells <= 1) {
                 vector<pair<int, int>> positions;
                 for(int k = 0; k < 5; k++) {
                     if (!board[i + k][j - k].isCornerCell()) {
@@ -119,7 +125,6 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
                 }
                 result.count++;
                 result.positions.push_back(positions);
-                j -= 4;
             }
         }
     }
