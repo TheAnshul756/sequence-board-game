@@ -410,11 +410,11 @@ public:
 class GameManager {
     GameState gameState;
     GameConfig config;
-    vector<IPlayer> players;
-    map<ChipType, vector<IPlayer>> team;
+    vector<IPlayer*> players;
+    map<ChipType, vector<IPlayer*>> team;
     int currentPlayerIndex;
 public:
-    GameManager(GameConfig cfg, vector<IPlayer> pls)
+    GameManager(GameConfig cfg, vector<IPlayer*> pls)
         : config(cfg), players(pls), currentPlayerIndex(0),
           gameState(Board(cfg.layoutStrategy), vector<vector<Card>>(cfg.numPlayers), vector<Card>()) {
         Board board(config.layoutStrategy);
@@ -498,7 +498,7 @@ public:
     }
 
     void processMove(int playerIndex, Move move) {
-        IPlayer& player = players[playerIndex];
+        IPlayer& player = *players[playerIndex];
         ChipType chipType = player.getChipType();
         Board& board = gameState.getBoard();
         switch (move.card.getType()) {
@@ -539,18 +539,18 @@ public:
 
     void startGame() {
         while (true) {
-            IPlayer& currentPlayer = players[currentPlayerIndex];
+            IPlayer& currentPlayer = *players[currentPlayerIndex];
             PlayerView view(currentPlayerIndex, gameState);
             Move move = currentPlayer.playTurn(view);
             validateMove(currentPlayerIndex, move);
             processMove(currentPlayerIndex, move);
             for (auto& player : players) {
-                player.notifyMove(move, currentPlayer.getChipType());
+                player->notifyMove(move, currentPlayer.getChipType());
             }
             if (checkWinCondition()) {
                 cout << "Game Over!" << endl;
                 for (auto i : team[currentPlayer.getChipType()]) {
-                    cout << "Player " << i.getChipType() << " wins!" << endl;
+                    cout << "Player " << i->getChipType() << " wins!" << endl;
                 }
             }
             currentPlayerIndex = (currentPlayerIndex + 1) % config.numPlayers;
@@ -567,22 +567,17 @@ int main() {
     DefaultBoardLayoutStrategy* layoutStrategy = new DefaultBoardLayoutStrategy();
     GameConfig config(2, OneVsOne, layoutStrategy, 2);
 
-    vector<IPlayer*> playerPtrs;
+    vector<IPlayer*> players;
     for (int i = 0; i < 2; ++i) {
         ChipType chip = (i == 0) ? RED : GREEN;
         PlayerView view(i, GameState(Board(layoutStrategy), vector<vector<Card>>(2), vector<Card>()));
-        playerPtrs.push_back(new HumanPlayer(i, chip, view));
-    }
-
-    vector<IPlayer> players;
-    for (auto p : playerPtrs) {
-        players.push_back(*p);
+        players.push_back(new HumanPlayer(i, chip, view));
     }
 
     GameManager manager(config, players);
     manager.startGame();
 
-    for (auto p : playerPtrs) {
+    for (auto p : players) {
         delete p;
     }
     delete layoutStrategy;
