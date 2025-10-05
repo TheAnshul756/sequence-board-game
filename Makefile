@@ -26,7 +26,16 @@ $(OBJ_DIR):
 clean:
 	rm -rf $(OBJ_DIR) $(EXECUTABLE)
 
-run: all
+# Make without warnings by default; use `make warnings` to build with -Wall.
+.DEFAULT_GOAL := build_nowarn
+
+build_nowarn:
+	$(MAKE) all CXXFLAGS='-std=c++17 -Iinclude'
+
+warnings:
+	$(MAKE) clean all CXXFLAGS='-std=c++17 -Wall -Iinclude'
+
+run: build_nowarn
 	./$(EXECUTABLE)
 
 .PHONY: all clean run
