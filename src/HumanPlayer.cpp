@@ -20,12 +20,13 @@ void HumanPlayer::printBoard() {
     for (int r = 0; r < board.getNumRows(); ++r) {
         // Alternate between dark and light background
         string bgColor = (r % 2 == 0) ? "\033[48;5;235m" : "\033[48;5;238m";
-        cout << bgColor << "  " << r << "  ";  // Apply background color to row number
+        cout << bgColor << "  " << r << "  \033[0m";  // Row number with background
         for (int c = 0; c < board.getNumCols(); ++c) {
             BoardCell cell = board.getCell(r, c);
-            cout << cell.toNotation() << " ";
+            cout << bgColor;  // Set background color before each cell
+            cout << cell.toNotation() << " \033[0m";  // Reset color after cell with space
         }
-        cout << bgColor << "  " << r << "  \033[0m";  // Apply background color to row number and reset
+        cout << bgColor << "  " << r << "  \033[0m";  // Row number with background
         cout << endl;
     }
     cout << "     ";
@@ -37,11 +38,52 @@ void HumanPlayer::printBoard() {
 
 void HumanPlayer::printHand() {
     vector<Card> hand = view.getPlayerCards();
-    cout << playerId << " player's hand: ";
+    cout << playerId << " player with chiptype " << (chipType == RED ? "X" : (chipType == GREEN ? "O" : "+")) << "'s hand: ";
     for (int i = 0; i < hand.size(); ++i) {
         cout << i << ") " << hand[i].toNotation() << " ";
     }
     cout << endl;
+}
+
+Move HumanPlayer::getPositionInput(Card selectedCard) {
+    int row, col;
+    if (selectedCard.getType() == WILDPLACE) {
+        cout << "Enter row and column to place chip (0-9): ";
+        cin >> row >> col;
+    } else if (selectedCard.getType() == WILDREMOVE) {
+        cout << "Enter row and column to remove chip (0-9): ";
+        cin >> row >> col;
+    } else {
+        cout << "Enter row and column to place chip (0-9): ";
+        cout << "Available positions for " << selectedCard.toNotation() << ":" << endl;
+        vector<pair<int, int>> validPositions;
+        Board board = view.getBoard();
+
+        for (int r = 0; r < board.getNumRows(); ++r) {
+            for (int c = 0; c < board.getNumCols(); ++c) {
+                if (board.getCell(r, c).getCard().toNotation() == selectedCard.toNotation()) {
+                    validPositions.push_back({r, c});
+                    cout << validPositions.size()-1 << ") Position (" << r << "," << c << ")" << endl;
+                }
+            }
+        }
+
+        if (validPositions.empty()) {
+            throw invalid_argument("No valid positions available for this card");
+        }
+
+        int choice;
+        cout << "Enter position index: ";
+        cin >> choice;
+
+        if (choice < 0 || choice >= validPositions.size()) {
+            throw invalid_argument("Invalid position index");
+        }
+
+        row = validPositions[choice].first;
+        col = validPositions[choice].second;
+    }
+    return Move{row, col, selectedCard};
 }
 
 Move HumanPlayer::playTurn(const PlayerView& v) {
@@ -56,10 +98,7 @@ Move HumanPlayer::playTurn(const PlayerView& v) {
         throw invalid_argument("Invalid card index");
     }
     Card selectedCard = hand[cardIndex];
-    int row, col;
-    cout << "Enter row and column to place/remove chip (0-9): ";
-    cin >> row >> col;
-    return Move{row, col, selectedCard};
+    return getPositionInput(selectedCard);
 }
 
 void HumanPlayer::notifyMove(const Move move, ChipType chip) {
