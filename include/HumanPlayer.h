@@ -14,7 +14,7 @@ class HumanPlayer : public IPlayer {
 public:
     HumanPlayer(int id, ChipType type, PlayerView& view);
     Move playTurn(const PlayerView& v) override;
-    void notifyMove(const Move move, ChipType chip) override;
+    void notifyMove(const Move move, ChipType chip, const PlayerView& view) override;
 };
 
 #endif // HUMANPLAYER_H

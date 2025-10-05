@@ -101,7 +101,7 @@ Move HumanPlayer::playTurn(const PlayerView& v) {
     return getPositionInput(selectedCard);
 }
 
-void HumanPlayer::notifyMove(const Move move, ChipType chip) {
+void HumanPlayer::notifyMove(const Move move, ChipType chip, const PlayerView& view) {
     cout << "Chip " << chip << " placed/removed at (" 
          << move.row << ", " << move.col << ") using card " 
          << move.card.toNotation() << endl;

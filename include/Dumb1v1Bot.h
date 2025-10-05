@@ -12,7 +12,7 @@ class Dumb1v1Bot : public IPlayer {
 public:
     Dumb1v1Bot(int id, ChipType type, PlayerView& view);
     Move playTurn(const PlayerView& v) override;
-    void notifyMove(const Move move, ChipType chip) override;
+    void notifyMove(const Move move, ChipType chip, const PlayerView& view) override;
 };
 
 #endif // DUMB1V1BOT_H

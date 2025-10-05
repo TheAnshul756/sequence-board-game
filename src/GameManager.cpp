@@ -134,20 +134,26 @@ void GameManager::processMove(int playerIndex, Move move) {
 }
 
 void GameManager::startGame() {
+
     while (true) {
         IPlayer& currentPlayer = *players[currentPlayerIndex];
         PlayerView view(currentPlayerIndex, gameState);
         Move move = currentPlayer.playTurn(view);
         validateMove(currentPlayerIndex, move);
         processMove(currentPlayerIndex, move);
-        for (auto& player : players) {
-            player->notifyMove(move, currentPlayer.getChipType());
+        bool isGameWon = checkWinCondition();
+        // Notify all players about the move
+        for (int ind = 0; ind < players.size(); ++ind) {
+            IPlayer* player = players[ind];
+            view = PlayerView(ind, gameState);
+            player->notifyMove(move, currentPlayer.getChipType(), view);
         }
-        if (checkWinCondition()) {
+        if (isGameWon) {
             cout << "Game Over!" << endl;
             for (auto i : team[currentPlayer.getChipType()]) {
                 cout << "Player " << i->getChipType() << " wins!" << endl;
             }
+            break;
         }
         currentPlayerIndex = (currentPlayerIndex + 1) % config.numPlayers;
         if(gameState.getRemainingCards().empty()) {

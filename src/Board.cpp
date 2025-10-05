@@ -1,4 +1,5 @@
 #include "Board.h"
+#include <iostream>
 
 using namespace std;
 
@@ -20,13 +21,13 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
     // Unmark all sequences first
     for(auto& row : board) {
         for(auto& cell : row) {
-            if(cell.isInSequence()) {
+            if(cell.isInSequence() && cell.getChipType() == type) {
                 cell.setInSequence(false);
             }
         }
     }
     SequenceResult result = {0, {}};
-    // Check horizontal sequences
+    // Check vertical sequences
     for(int i = 0; i < numCols; i++) {
         for(int j = 0; j < numRows - 4; j++) {
             bool allMatch = true;
@@ -39,7 +40,9 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
             if(allMatch) {
                 vector<pair<int, int>> positions;
                 for(int k = 0; k < 5; k++) {
-                    board[j + k][i].setInSequence(true);
+                    if (!board[j + k][i].isCornerCell()) {
+                        board[j + k][i].setInSequence(true);
+                    }
                     positions.push_back({j + k, i});
                 }
                 result.count++;
@@ -48,7 +51,7 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
             }
         }
     }
-    // Check vertical sequences
+    // Check horizontal sequences
     for(int i = 0; i < numRows; i++) {
         for(int j = 0; j < numCols - 4; j++) {
             bool allMatch = true;
@@ -61,7 +64,9 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
             if(allMatch) {
                 vector<pair<int, int>> positions;
                 for(int k = 0; k < 5; k++) {
-                    board[i][j + k].setInSequence(true);
+                    if (!board[i][j + k].isCornerCell()) {
+                        board[i][j + k].setInSequence(true);
+                    }
                     positions.push_back({i, j + k});
                 }
                 result.count++;
@@ -83,7 +88,9 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
             if (allMatch) {
                 vector<pair<int, int>> positions;
                 for(int k = 0; k < 5; k++) {
-                    board[i + k][j + k].setInSequence(true);
+                    if (!board[i + k][j + k].isCornerCell()) {
+                        board[i + k][j + k].setInSequence(true);
+                    }
                     positions.push_back({i + k, j + k});
                 }
                 result.count++;
@@ -105,7 +112,9 @@ SequenceResult Board::checkAndMarkSequences(ChipType type) {
             if (allMatch) {
                 vector<pair<int, int>> positions;
                 for(int k = 0; k < 5; k++) {
-                    board[i + k][j - k].setInSequence(true);
+                    if (!board[i + k][j - k].isCornerCell()) {
+                        board[i + k][j - k].setInSequence(true);
+                    }
                     positions.push_back({i + k, j - k});
                 }
                 result.count++;

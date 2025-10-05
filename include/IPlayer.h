@@ -10,7 +10,7 @@ protected:
     ChipType chipType;
 public:
     virtual Move playTurn(const PlayerView& view) = 0;
-    virtual void notifyMove(const Move move, ChipType chip) = 0;
+    virtual void notifyMove(const Move move, ChipType chip, const PlayerView& view) = 0;
     virtual ChipType getChipType() const;
     virtual ~IPlayer() = default;
 };

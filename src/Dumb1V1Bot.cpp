@@ -12,8 +12,10 @@ Dumb1v1Bot::Dumb1v1Bot(int id, ChipType type, PlayerView& v) : playerId(id), vie
     chipType = type;
 }
 
-void Dumb1v1Bot::notifyMove(const Move move, ChipType chip) {
+void Dumb1v1Bot::notifyMove(const Move move, ChipType chip, const PlayerView& v) {
     // Bot does not need to do anything on notification
+    view = v;
+    printBoard();
 }
 
 void Dumb1v1Bot::printBoard() {
@@ -44,7 +46,6 @@ void Dumb1v1Bot::printBoard() {
 
 Move Dumb1v1Bot::playTurn(const PlayerView& v) {
     view = v;
-    printBoard();
     vector<Card> hand = view.getPlayerCards();
     std::this_thread::sleep_for(std::chrono::seconds(1)); // Pause for 5 seconds to simulate thinking
     do {
