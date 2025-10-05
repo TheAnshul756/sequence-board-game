@@ -28,9 +28,9 @@ vector<Card> GameManager::initializeDeck() {
     mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
     vector<Card> deck;
     for(const string& notation : ALL_CARDS) {
-        if (notation == "JS" || notation == "JD") {
+        if (notation == "JC" || notation == "JD") {
             deck.push_back(Card(notation, WILDPLACE));
-        } else if (notation == "JC" || notation == "JH") {
+        } else if (notation == "JS" || notation == "JH") {
             deck.push_back(Card(notation, WILDREMOVE));
         } else {
             deck.push_back(Card(notation));
@@ -52,22 +52,8 @@ vector<Card> GameManager::drawInitialCards(vector<Card>& deck) {
 }
 
 void GameManager::setupTeams() {
-    if (config.mode == OneVsOne) {
-        team[RED] = {players[0]};
-        team[GREEN] = {players[1]};
-    } else if (config.mode == TwoVsTwo) {
-        team[RED] = {players[0], players[2]};
-        team[GREEN] = {players[1], players[3]};
-    } else if (config.mode == OneVsOneVsOne) {
-        team[RED] = {players[0]};
-        team[GREEN] = {players[1]};
-        team[BLUE] = {players[2]};
-    } else if (config.mode == TwoVsTwoVsTwo) {
-        team[RED] = {players[0], players[3]};
-        team[GREEN] = {players[1], players[4]};
-        team[BLUE] = {players[2], players[5]};
-    } else {
-        throw invalid_argument("Unsupported team mode");
+    for (int i = 0; i < players.size(); ++i) {
+        team[players[i]->getChipType()].push_back(players[i]);
     }
 }
 

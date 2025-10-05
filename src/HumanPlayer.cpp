@@ -10,28 +10,43 @@ HumanPlayer::HumanPlayer(int id, ChipType type, PlayerView& v) : playerId(id), v
     chipType = type;
 }
 
+bool isInHand(const Card& card, const vector<Card>& hand) {
+    for (const auto& c : hand) {
+        if (c.toNotation() == card.toNotation()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void HumanPlayer::printBoard() {
+    string bgYellow = "\033[48;5;226m";  // Yellow background color
     Board board = view.getBoard();
-    cout << "\033[0m     ";  // Reset color
+    vector<Card> hand = view.getPlayerCards();
+    cout << "\033[0m   ";  // Reset color
     for(int c = 0; c < board.getNumCols(); ++c) {
-        cout << "  " << c << "  ";
+        cout << " " << c << " ";
     }
     cout << endl;
     for (int r = 0; r < board.getNumRows(); ++r) {
         // Alternate between dark and light background
         string bgColor = (r % 2 == 0) ? "\033[48;5;235m" : "\033[48;5;238m";
-        cout << bgColor << "  " << r << "  \033[0m";  // Row number with background
+        cout << bgColor << " " << r << " \033[0m";  // Row number with background
         for (int c = 0; c < board.getNumCols(); ++c) {
             BoardCell cell = board.getCell(r, c);
-            cout << bgColor;  // Set background color before each cell
-            cout << cell.toNotation() << " \033[0m";  // Reset color after cell with space
+            if(cell.isEmpty() && isInHand(cell.getCard(), hand)) {
+                cout << bgYellow;  // Highlight available positions with yellow background
+            } else {
+                cout << bgColor;  // Set background color before each cell
+            }
+            cout << cell.toNotation() << "\033[0m";  // Reset color after cell with space
         }
-        cout << bgColor << "  " << r << "  \033[0m";  // Row number with background
+        cout << bgColor << " " << r << "\033[0m";  // Row number with background
         cout << endl;
     }
-    cout << "     ";
+    cout << "  ";
     for(int c = 0; c < board.getNumCols(); ++c) {
-        cout << "  " << c << "  ";
+        cout << " " << c << " ";
     }
     cout << endl;
 }

@@ -4,16 +4,16 @@ using namespace std;
 
 DefaultBoardLayoutStrategy::DefaultBoardLayoutStrategy() {
     boardNotation = {
-        {"JJ", "AC", "KC", "QC", "TC", "9C", "8C", "7C", "6C", "JJ"},
-        {"AD", "7S", "8S", "9S", "TS", "QS", "KS", "AS", "5C", "2S"},
-        {"KD", "6S", "TC", "9C", "8C", "7C", "6C", "2D", "4C", "3S"},
-        {"QD", "5S", "QC", "8H", "7H", "6H", "5C", "3D", "3C", "4S"},
-        {"TD", "4S", "KC", "9H", "2H", "5H", "4C", "4D", "2C", "5S"},
-        {"9D", "3S", "AC", "TH", "3H", "4H", "3C", "5D", "AH", "6S"},
-        {"8D", "2S", "AD", "QH", "KH", "AH", "2C", "6D", "KH", "7S"},
-        {"7D", "2H", "KD", "QD", "TD", "9D", "8D", "7D", "QH", "8S"},
-        {"6D", "3H", "4H", "5H", "6H", "7H", "8H", "9H", "TH", "9S"},
-        {"JJ", "5D", "4D", "3D", "2D", "AS", "KS", "QS", "TS", "JJ"},
+        {"JJ", "6D", "7D", "8D", "9D", "TD", "QD", "KD", "AD", "JJ"},
+        {"5D", "3H", "2H", "2S", "3S", "4S", "5S", "6S", "7S", "AC"},
+        {"4D", "4H", "KD", "AD", "AC", "KC", "QC", "TC", "8S", "KC"},
+        {"3D", "5H", "QD", "QH", "TH", "9H", "8H", "9C", "9S", "QC"},
+        {"2D", "6H", "TD", "KH", "3H", "2H", "7H", "8C", "TS", "TC"},
+        {"AS", "7H", "9D", "AH", "4H", "5H", "6H", "7C", "QS", "9C"},
+        {"KS", "8H", "8D", "2C", "3C", "4C", "5C", "6C", "KS", "8C"},
+        {"QS", "9H", "7D", "6D", "5D", "4D", "3D", "2D", "AS", "7C"},
+        {"TS", "TH", "QH", "KH", "AH", "2C", "3C", "4C", "5C", "6C"},
+        {"JJ", "9S", "8S", "7S", "6S", "5S", "4S", "3S", "2S", "JJ"}
     };
 }
 

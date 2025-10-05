@@ -15,8 +15,8 @@ MediumLevel1v1Bot::MediumLevel1v1Bot(int id, ChipType type, PlayerView& v) : pla
 }
 
 void MediumLevel1v1Bot::notifyMove(const Move move, ChipType chip, const PlayerView& v) {
-    view = v;
-    printBoard();
+    // view = v;
+    // printBoard();
 }
 
 void MediumLevel1v1Bot::printBoard() {
