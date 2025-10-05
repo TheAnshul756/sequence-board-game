@@ -22,7 +22,16 @@ bool BoardCell::isCornerCell() const { return isCorner; }
 bool BoardCell::isEmpty() const { return chipType == EMPTY; }
 
 string BoardCell::toNotation() const {
-    return card.toNotation() + 
-           (chipType == EMPTY ? " " : (chipType == RED ? "X" : (chipType == GREEN ? "O" : "+"))) +
-           (inSequence ? "*" : " ");
+    string chipSymbol;
+    const string RESET = "\033[49m\033[0m";  // 49m resets background to default
+    if (chipType == EMPTY) {
+        chipSymbol = " ";
+    } else if (chipType == RED) {
+        chipSymbol = "\033[49m\033[31mX" + RESET;
+    } else if (chipType == GREEN) {
+        chipSymbol = "\033[49m\033[32mO" + RESET;
+    } else {
+        chipSymbol = "\033[49m\033[34m+" + RESET;
+    }
+    return card.toNotation() + chipSymbol + (inSequence ? "*" : " ");
 }

@@ -10,6 +10,7 @@ class HumanPlayer : public IPlayer {
     PlayerView view;
     void printBoard();
     void printHand();
+    Move getPositionInput(Card selectedCard);
 public:
     HumanPlayer(int id, ChipType type, PlayerView& view);
     Move playTurn(const PlayerView& v) override;
