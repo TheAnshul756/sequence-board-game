@@ -91,39 +91,47 @@ Move MediumLevel1v1Bot::playTurn(const PlayerView& v) {
     vector<Card> hand = view.getPlayerCards();
     Board board = view.getBoard();
     
-    // // Add small delay to simulate thinking
-    // std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    
-    // Store all possible moves and their scores
     vector<pair<Move, int>> scoredMoves;
     
-    // First, check for immediate winning moves or blocking opponent's wins
+    // Check all possible moves for each card
     for(const Card& card : hand) {
+        bool canUseCard = false;  // Track if card can be used anywhere
+        
         for(int r = 0; r < board.getNumRows(); r++) {
             for(int c = 0; c < board.getNumCols(); c++) {
                 BoardCell cell = board.getCell(r, c);
                 
                 if(card.getType() == WILDPLACE) {
                     if(cell.isEmpty() && !cell.isCornerCell()) {
+                        canUseCard = true;
                         int score = evaluatePosition(board, r, c, chipType);
                         scoredMoves.push_back({{r, c, card}, score});
                     }
                 }
                 else if(card.getType() == WILDREMOVE) {
                     if(!cell.isEmpty() && cell.getChipType() != chipType && !cell.isInSequence()) {
-                        int score = evaluatePosition(board, r, c, chipType) * 2; // Prioritize blocking
+                        canUseCard = true;
+                        int score = evaluatePosition(board, r, c, chipType) * 2;
                         scoredMoves.push_back({{r, c, card}, score});
                     }
                 }
                 else if(cell.isEmpty() && cell.getCard().toNotation() == card.toNotation()) {
+                    canUseCard = true;
                     int score = evaluatePosition(board, r, c, chipType);
                     scoredMoves.push_back({{r, c, card}, score});
                 }
             }
         }
+        
+        // If card cannot be used anywhere, discard it
+        if(!canUseCard) {
+            cout << "MediumLevel1v1Bot discarding card " << card.toNotation() 
+                 << " as no valid moves available" << endl;
+            return Move{-1, -1, card, true};  // Discard move
+        }
     }
     
-    // If we found any moves, pick the one with highest score
+    // If we found any valid moves, pick the one with highest score
     if(!scoredMoves.empty()) {
         auto bestMove = std::max_element(
             scoredMoves.begin(), 
@@ -138,19 +146,10 @@ Move MediumLevel1v1Bot::playTurn(const PlayerView& v) {
         return bestMove->first;
     }
     
-    // Fallback: if no good moves found, play first legal move
-    for(const Card& card : hand) {
-        for(int r = 0; r < board.getNumRows(); r++) {
-            for(int c = 0; c < board.getNumCols(); c++) {
-                BoardCell cell = board.getCell(r, c);
-                if((card.getType() == WILDPLACE && cell.isEmpty() && !cell.isCornerCell()) ||
-                   (card.getType() == WILDREMOVE && !cell.isEmpty() && cell.getChipType() != chipType && !cell.isInSequence()) ||
-                   (cell.isEmpty() && cell.getCard().toNotation() == card.toNotation())) {
-                    return Move{r, c, card};
-                }
-            }
-        }
+    // If we somehow get here (shouldn't happen since we check for discards above)
+    if(!hand.empty()) {
+        return Move{-1, -1, hand[0], true};  // Discard first card as fallback
     }
     
-    throw runtime_error("MediumLevel1v1Bot couldn't find any valid moves");
+    throw runtime_error("MediumLevel1v1Bot couldn't find any valid moves and has no cards");
 }

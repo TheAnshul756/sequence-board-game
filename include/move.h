@@ -6,6 +6,7 @@
 struct Move {
     int row, col;
     Card card;
+    bool discard; // true if the move is to discard the card
 };
 
 #endif // MOVE_H

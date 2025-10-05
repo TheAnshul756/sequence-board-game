@@ -83,28 +83,40 @@ void GameManager::processMove(int playerIndex, Move move) {
     IPlayer& player = *players[playerIndex];
     ChipType chipType = player.getChipType();
     Board& board = gameState.getBoard();
-    switch (move.card.getType()) {
-    case CardType::NORMAL:
-        if (!board.canPlaceChip(move.row, move.col, chipType)) {
-            throw invalid_argument("Cannot place chip at the specified position");
+    if(move.discard) {
+        // check if the card is not empty on the board
+        for(int r = 0; r < board.getNumRows(); r++) {
+            for(int c = 0; c < board.getNumCols(); c++) {
+                BoardCell cell = board.getCell(r, c);
+                if(cell.toNotation() == move.card.toNotation() && !cell.isEmpty()) {
+                    throw invalid_argument("Cannot discard a card that has chips on the board");
+                }
+            }
         }
-        board.placeChip(move.row, move.col, chipType);
-        break;
-    case CardType::WILDPLACE:
-        if (!board.canPlaceChip(move.row, move.col, chipType)) {
-            throw invalid_argument("Cannot place chip at the specified position");
+    } else {
+        switch (move.card.getType()) {
+        case CardType::NORMAL:
+            if (!board.canPlaceChip(move.row, move.col, chipType)) {
+                throw invalid_argument("Cannot place chip at the specified position");
+            }
+            board.placeChip(move.row, move.col, chipType);
+            break;
+        case CardType::WILDPLACE:
+            if (!board.canPlaceChip(move.row, move.col, chipType)) {
+                throw invalid_argument("Cannot place chip at the specified position");
+            }
+            board.placeChip(move.row, move.col, chipType);
+            break;
+        case CardType::WILDREMOVE:
+            if (!board.canRemoveChip(move.row, move.col, chipType)) {
+                throw invalid_argument("Cannot remove chip at the specified position");
+            }
+            board.removeChip(move.row, move.col);
+            break;
+        default:
+            throw invalid_argument("Invalid card type");
         }
-        board.placeChip(move.row, move.col, chipType);
-        break;
-    case CardType::WILDREMOVE:
-        if (!board.canRemoveChip(move.row, move.col, chipType)) {
-            throw invalid_argument("Cannot remove chip at the specified position");
-        }
-        board.removeChip(move.row, move.col);
-        break;
-    default:
-        throw invalid_argument("Invalid card type");
-}
+    }
     // Remove played card from player's hand
     vector<Card>& hand = gameState.getPlayerCards(playerIndex);
     auto it = find_if(hand.begin(), hand.end(), [&](const Card& c) {
@@ -136,6 +148,10 @@ void GameManager::startGame() {
         Move move = currentPlayer.playTurn(view);
         validateMove(currentPlayerIndex, move);
         processMove(currentPlayerIndex, move);
+        if (move.discard) {
+            cout << "Player " << currentPlayerIndex << " discarded card " << move.card.toNotation() << endl;
+            continue;
+        }
         bool isGameWon = checkWinCondition();
         // Notify all players about the move
         for (int ind = 0; ind < players.size(); ++ind) {
