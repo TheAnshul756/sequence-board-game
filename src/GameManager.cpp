@@ -119,6 +119,15 @@ void GameManager::processMove(int playerIndex, Move move) {
     gameState.drawCard(playerIndex);
 }
 
+string getChipString(ChipType type) {
+    switch(type) {
+        case RED: return "Red";
+        case BLUE: return "Blue";
+        case GREEN: return "Green";
+        default: return "Unknown";
+    }
+}
+
 void GameManager::startGame() {
 
     while (true) {
@@ -136,9 +145,7 @@ void GameManager::startGame() {
         }
         if (isGameWon) {
             cout << "Game Over!" << endl;
-            for (auto i : team[currentPlayer.getChipType()]) {
-                cout << "Player " << i->getChipType() << " wins!" << endl;
-            }
+            cout << "Players with " << getChipString(currentPlayer.getChipType()) << " chips win!" << endl;
             break;
         }
         currentPlayerIndex = (currentPlayerIndex + 1) % config.numPlayers;
