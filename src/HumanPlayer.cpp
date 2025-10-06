@@ -83,6 +83,8 @@ Move HumanPlayer::getPositionInput(Card selectedCard) {
             }
         }
 
+        cout << "2) Discard the card" << endl;
+
         if (validPositions.empty()) {
             throw invalid_argument("No valid positions available for this card");
         }
@@ -91,8 +93,11 @@ Move HumanPlayer::getPositionInput(Card selectedCard) {
         cout << "Enter position index: ";
         cin >> choice;
 
-        if (choice < 0 || choice >= validPositions.size()) {
+        if (choice < 0 || choice > validPositions.size()) {
             throw invalid_argument("Invalid position index");
+        }
+        if (choice == validPositions.size()) {
+            return Move{-1, -1, selectedCard, true}; // Discard the card
         }
 
         row = validPositions[choice].first;

@@ -67,6 +67,7 @@ Move Dumb1v1Bot::playTurn(const PlayerView& v) {
                     }
             }
         }
+        return Move{-1, -1, selectedCard, true}; // Discard the first card if no valid move found
     } while(true);
     // Should never reach here
     throw std::runtime_error("Dumb1v1Bot failed to find a move");
